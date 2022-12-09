@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Coming Soon - Start Bootstrap Theme</title>
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link href="https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&amp;display=swap" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+    </head>
+    <body>
+        <!-- Background Video-->
+        <video class="bg-video" playsinline="playsinline" autoplay="autoplay" muted="muted" loop="loop"><source src="assets/mp4/bg.mp4" type="video/mp4" /></video>
+        <!-- Masthead-->
+        <script src="https://www.gstatic.com/firebasejs/5.5.6/firebase.js"></script>
+    <script>
+        var table = {};
+        var idx = [];
+        var Owner = [];
+        var seen = [];
+        var info = [];
+        var flag = 0;
+        var database;
+        class Info {
+            constructor(data) {
+                this.name = data.name;
+                this.phone = data.phone;
+                this.line = data.line;
+                this.message = data.message;
+            }
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            var ret;
+            initDB().then(getFlag).then(getMember).then(getOnwer);
+        }, false);
+    </script>
+        <div class="masthead">
+            <div class="masthead-content text-white">
+                <div class="container-fluid px-4 px-lg-0">
+                    <h1 class="fst-italic lh-1 mb-4">亞諾區交換禮物</h1>
+                    <p class="mb-5">輸入自己的名字得到你的小主人，記得截圖喔，因為只能看一次</p>
+                    <!-- * * * * * * * * * * * * * * *-->
+                    <!-- * * SB Forms Contact Form * *-->
+                    <!-- * * * * * * * * * * * * * * *-->
+                    <!-- This form is pre-integrated with SB Forms.-->
+                    <!-- To make this form functional, sign up at-->
+                    <!-- https://startbootstrap.com/solution/contact-forms-->
+                    <!-- to get an API token!-->
+                    <!-- Email address input-->
+                    <input id="yourname">
+                    <button id='submit'>submit</button></p>
+                    <p> 你的小主人是: <em id='owner'></em></p>
+                    <p> 電話號碼: <em id='phone'></em></p>
+                    <p> 聯絡資料: <em id='line'></em></p>
+                    <p> 小提示: <em id='message'></em></p>
+                    <div class="d-none" id="submitErrorMessage"><div class="text-center text-danger mb-3 mt-2">Error sending message!</div></div>
+                </div>
+            </div>
+        </div>
+        <!-- Social Icons-->
+        <!-- For more icon options, visit https://fontawesome.com/icons?d=gallery&p=2&s=brands-->
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+        <!-- * *                               SB Forms JS                               * *-->
+        <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
+        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+        <!-- <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script> -->
+    </body>
+</html>
+
+<script>
+
+    document.getElementById('submit').onclick = function call() {
+        var name = document.getElementById('yourname').value;
+        if (seen[table[name]] == 0) {
+            document.getElementById("owner").innerHTML = info[Owner[table[name]]].name;
+            document.getElementById("line").innerHTML = info[Owner[table[name]]].line;
+            document.getElementById("phone").innerHTML = info[Owner[table[name]]].phone;
+            document.getElementById("message").innerHTML = info[Owner[table[name]]].message;
+            seen[table[name]] = 1;
+
+            database.collection("webdata").doc("auth").set({
+                auth: seen
+            });
+        } else if (seen[table[name]] == 1) {
+            document.getElementById("owner").innerHTML = "已經看過了喔";
+        } else {
+            document.getElementById("owner").innerHTML = "你誰?";
+        }
+    }
+
+    function initDB() {
+        return new Promise((resolve, reject) => {
+            const firebaseConfig = {
+    apiKey: "AIzaSyB538lnwo-0enVoAbS3qD2tRO4x0ZnfZcU",
+    authDomain: "website-31faa.firebaseapp.com",
+    databaseURL: "https://website-31faa-default-rtdb.firebaseio.com",
+    projectId: "website-31faa",
+    storageBucket: "website-31faa.appspot.com",
+    messagingSenderId: "686456091123",
+    appId: "1:686456091123:web:6f6d71330d1df286c7a286",
+    measurementId: "G-4WD1EMZ4Q0"
+  };
+            const app = firebase.initializeApp(firebaseConfig);
+            database = firebase.firestore();
+            resolve();
+        });
+    }
+
+    function getFlag() {
+        return new Promise((resolve, reject) => {
+            database.collection("webdata").doc("webdata").get().then(function(doc) {
+                if (doc.data()["flag"] == 0) {
+                    database.collection("webdata").doc("webdata").set({
+                        flag: 1
+                    });
+                } else {
+                    flag = 1;
+                }
+                resolve();
+            })
+        });
+    }
+
+    function getMember() {
+        return new Promise((resolve, reject) => {
+            database.collection("webdata").doc("member").get().then(function(doc){
+                info.length = doc.data()["member"].length
+                for (var i = 0; i < doc.data()["member"].length; i++) {
+                    table[doc.data()["member"][i]["name"]] = i;
+                    info[i] = new Info(doc.data()["member"][i]);
+                }
+                resolve();
+            });
+        });
+    }
+
+    function getOnwer() {
+        return new Promise((resolve, reject) => {
+            if (flag == 0) {
+                shuffle(Object.keys(table).length);
+                Owner.length = Object.keys(table).length;
+                seen.length = Object.keys(table).length;
+                for (var [key, val] of Object.entries(table)) {
+                    //Owner[idx[val]] = key;
+                    Owner[idx[val]] = val;
+                }
+                for (var i = 0; i < seen.length; i++) {
+                    seen[i] = 0;
+                }
+                storedata();
+                resolve();
+            } else {
+                database.collection("webdata").doc("owner").get().then(function(doc) {
+                    Owner = doc.data()["owner"];
+                })
+                database.collection("webdata").doc("auth").get().then(function(doc) {
+                    seen = doc.data()["auth"];
+                    resolve();
+                })
+            }
+        });
+    }
+
+    function storedata() {
+        var docRef = database.collection("webdata").doc("owner");
+        docRef.set({
+            owner: Owner
+        });
+
+        var docRef = database.collection("webdata").doc("auth");
+        docRef.set({
+            auth: seen
+        });
+    }
+
+    function shuffle(len) {
+         for (var i = 0; i < len; i++) {
+            idx[i] = i;
+         }
+         for (var i = len - 1; i > 0; i--) {
+            var tmp = getRandom(i);
+            [idx[tmp], idx[i]] = [idx[i], idx[tmp]];
+         }
+    }
+
+    function getRandom(upper) {
+        return Math.floor(Math.random()*upper);
+    }
+    
+</script>
